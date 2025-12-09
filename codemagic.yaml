@@ -7,5 +7,12 @@ workflows:
     scripts:
       - flutter pub get
       - flutter build ipa --release --no-codesign
+      - |
+          cd build/ios/archive
+          mkdir -p Payload
+          cp -R Runner.xcarchive/Products/Applications/Runner.app Payload/
+          zip -r Runner.ipa Payload
+          mkdir -p ../ipa
+          mv Runner.ipa ../ipa/
     artifacts:
       - build/ios/ipa/*.ipa
