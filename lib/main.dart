@@ -14,7 +14,7 @@ class DeliveryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const baseUrl = 'http://192.168.11.13:3000/api';
+    const baseUrl = 'http://192.168.1.108:3000/api';
 
     final apiClient = ApiClient(baseUrl: baseUrl);
     final authRepo = AuthRepository(apiClient: apiClient);
