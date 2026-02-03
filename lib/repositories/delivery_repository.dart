@@ -69,4 +69,30 @@ class DeliveryRepository {
     // A JSON-t a DeliveryOrderDetail.fromJson alakítja át modellé
     return DeliveryOrderDetail.fromJson(data);
   }
+
+  Future<List<DeliveryOrder>> fetchCompletedOrders() async {
+    final response = await apiClient.dio.get('/delivery/orders/completed');
+    if (response.statusCode != 200) {
+      throw Exception('HTTP ${response.statusCode}: ${response.data}');
+    }
+    final data = response.data as Map<String, dynamic>;
+    if (data['success'] != true) {
+      throw Exception(data['message'] ?? 'Ismeretlen hiba a válaszban.');
+    }
+    final List<dynamic> ordersJson = data['orders'] ?? [];
+    return ordersJson
+        .map((o) => DeliveryOrder.fromJson(o as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> undoCompleteOrder(int orderId) async {
+    final response = await apiClient.dio.put('/delivery/orders/$orderId/undo');
+    if (response.statusCode != 200) {
+      throw Exception('Nem sikerült visszavonni a rendelést.');
+    }
+    final data = response.data as Map<String, dynamic>;
+    if (data['success'] != true) {
+      throw Exception(data['message'] ?? 'Ismeretlen hiba a visszavonásnál.');
+    }
+  }
 }

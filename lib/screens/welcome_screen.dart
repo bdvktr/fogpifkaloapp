@@ -9,12 +9,15 @@ class WelcomeScreen extends StatefulWidget {
   final AuthRepository authRepository;
   final DeliveryRepository deliveryRepository;
   final ApiClient apiClient;
+  final String socketUrl;
+
 
   const WelcomeScreen({
     super.key,
     required this.authRepository,
     required this.deliveryRepository,
     required this.apiClient,
+    required this.socketUrl,
   });
 
   @override
@@ -112,6 +115,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 authRepository: widget.authRepository,
                                 deliveryRepository: widget.deliveryRepository,
                                 apiClient: widget.apiClient,
+                                socketUrl: widget.socketUrl,
                               ),
                             ),
                           );

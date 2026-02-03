@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import '../repositories/delivery_repository.dart';
 import '../models/delivery_order.dart';
 import '../models/user.dart';
+import '../utils/status_labels.dart';
 import 'order_detail_screen.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class OrdersScreen extends StatefulWidget {
   final DeliveryRepository deliveryRepository;
   final User currentUser;
+  final String socketUrl;
 
   const OrdersScreen({
     super.key,
     required this.deliveryRepository,
     required this.currentUser,
+    required this.socketUrl,
   });
 
   @override
@@ -26,7 +29,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   void _setupSocket() {
     final socket = IO.io(
-      'http://192.168.11.13:3000',
+      widget.socketUrl,
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()
@@ -192,9 +195,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: Colors.orange),
                                 ),
-                                child: const Text(
-                                  'Folyamatban',
-                                  style: TextStyle(
+                                child: Text(
+                                  o.status.huStatusLabel,
+                                  style: const TextStyle(
                                     color: Colors.orange,
                                     fontWeight: FontWeight.w600,
                                   ),

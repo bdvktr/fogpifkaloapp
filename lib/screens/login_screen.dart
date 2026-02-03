@@ -1,8 +1,8 @@
+import 'package:courierapp/screens/delivery_home_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../repositories/auth_repository.dart';
 import '../models/user.dart';
-import 'orders_screen.dart';
 import '../repositories/delivery_repository.dart';
 import '../api_client.dart';
 
@@ -10,12 +10,14 @@ class LoginScreen extends StatefulWidget {
   final AuthRepository authRepository;
   final DeliveryRepository deliveryRepository;
   final ApiClient apiClient;
+  final String socketUrl;
 
   const LoginScreen({
     super.key,
     required this.authRepository,
     required this.deliveryRepository,
     required this.apiClient,
+    required this.socketUrl
   });
 
   @override
@@ -61,9 +63,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => OrdersScreen(
+          builder: (_) => DeliveryHomeScreen(
             deliveryRepository: widget.deliveryRepository,
             currentUser: user,
+            socketUrl: widget.socketUrl,
           ),
         ),
       );
