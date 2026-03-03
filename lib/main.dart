@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'api_client.dart';
+import 'repositories/admin_repository.dart';
 import 'repositories/auth_repository.dart';
 import 'repositories/delivery_repository.dart';
 import 'screens/startup_screen.dart';
@@ -11,7 +12,6 @@ import 'screens/startup_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Konfig: futtatható --dart-define-dal is
   const apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'http://10.0.2.2:3000/api',
@@ -31,6 +31,7 @@ Future<void> main() async {
   late final ApiClient apiClient;
   late final AuthRepository authRepo;
   late final DeliveryRepository deliveryRepo;
+  late final AdminRepository adminRepo;
 
   apiClient = ApiClient(
     baseUrl: apiBaseUrl,
@@ -44,6 +45,7 @@ Future<void> main() async {
           builder: (_) => StartupScreen(
             authRepository: authRepo,
             deliveryRepository: deliveryRepo,
+            adminRepository: adminRepo,
             apiClient: apiClient,
             socketUrl: socketUrl,
           ),
@@ -55,6 +57,7 @@ Future<void> main() async {
 
   authRepo = AuthRepository(apiClient: apiClient);
   deliveryRepo = DeliveryRepository(apiClient: apiClient);
+  adminRepo = AdminRepository(apiClient: apiClient);
 
   runApp(
     DeliveryApp(
@@ -62,6 +65,7 @@ Future<void> main() async {
       apiClient: apiClient,
       authRepository: authRepo,
       deliveryRepository: deliveryRepo,
+      adminRepository: adminRepo,
       socketUrl: socketUrl,
     ),
   );
@@ -72,6 +76,7 @@ class DeliveryApp extends StatelessWidget {
   final ApiClient apiClient;
   final AuthRepository authRepository;
   final DeliveryRepository deliveryRepository;
+  final AdminRepository adminRepository;
   final String socketUrl;
 
   const DeliveryApp({
@@ -80,6 +85,7 @@ class DeliveryApp extends StatelessWidget {
     required this.apiClient,
     required this.authRepository,
     required this.deliveryRepository,
+    required this.adminRepository,
     required this.socketUrl,
   });
 
@@ -87,7 +93,7 @@ class DeliveryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: navigatorKey,
-      title: 'Burger Futár',
+      title: 'FogPifkáló',
       theme: ThemeData(
         primarySwatch: Colors.brown,
         useMaterial3: true,
@@ -95,6 +101,7 @@ class DeliveryApp extends StatelessWidget {
       home: StartupScreen(
         authRepository: authRepository,
         deliveryRepository: deliveryRepository,
+        adminRepository: adminRepository,
         apiClient: apiClient,
         socketUrl: socketUrl,
       ),

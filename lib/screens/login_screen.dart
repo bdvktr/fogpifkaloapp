@@ -1,14 +1,16 @@
-import 'package:courierapp/screens/delivery_home_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../repositories/auth_repository.dart';
-import '../models/user.dart';
-import '../repositories/delivery_repository.dart';
 import '../api_client.dart';
+import '../models/user.dart';
+import '../repositories/admin_repository.dart';
+import '../repositories/auth_repository.dart';
+import '../repositories/delivery_repository.dart';
+import 'delivery_home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final AuthRepository authRepository;
   final DeliveryRepository deliveryRepository;
+  final AdminRepository adminRepository;
   final ApiClient apiClient;
   final String socketUrl;
 
@@ -16,8 +18,9 @@ class LoginScreen extends StatefulWidget {
     super.key,
     required this.authRepository,
     required this.deliveryRepository,
+    required this.adminRepository,
     required this.apiClient,
-    required this.socketUrl
+    required this.socketUrl,
   });
 
   @override
@@ -38,10 +41,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
-    FocusScope.of(context).unfocus(); // billentyűzet elrejtése
+    FocusScope.of(context).unfocus();
 
-    if (_emailController.text.trim().isEmpty ||
-        _passwordController.text.isEmpty) {
+    if (_emailController.text.trim().isEmpty || _passwordController.text.isEmpty) {
       setState(() {
         _error = 'Kérlek töltsd ki az email és jelszó mezőket.';
       });
@@ -65,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(
           builder: (_) => DeliveryHomeScreen(
             deliveryRepository: widget.deliveryRepository,
+            adminRepository: widget.adminRepository,
             currentUser: user,
             socketUrl: widget.socketUrl,
           ),
@@ -93,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: primaryColor,
         elevation: 0,
         title: const Text(
-          'Futár bejelentkezés',
+          'Bejelentkezés',
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
@@ -106,27 +109,22 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Ikon / logó + cím
-                Icon(Icons.delivery_dining, size: 64, color: primaryColor),
+                Icon(Icons.lock_outline, size: 64, color: primaryColor),
                 const SizedBox(height: 12),
                 const Text(
-                  'Futár felület',
+                  'Admin / Futár felület',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Jelentkezz be a rendeléseid megtekintéséhez',
+                  'Jelentkezz be a rendelések és foglalások megtekintéséhez',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: Colors.black54),
                 ),
                 const SizedBox(height: 24),
 
-                // Kártya a formnak
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 20,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(18),
@@ -153,19 +151,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(
-                                Icons.error_outline,
-                                color: Colors.red,
-                                size: 20,
-                              ),
+                              const Icon(Icons.error_outline, color: Colors.red, size: 20),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   _error!,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 13,
-                                  ),
+                                  style: const TextStyle(color: Colors.red, fontSize: 13),
                                 ),
                               ),
                             ],
@@ -177,9 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Email',
                           prefixIcon: const Icon(Icons.email_outlined),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         keyboardType: TextInputType.emailAddress,
                       ),
@@ -189,9 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Jelszó',
                           prefixIcon: const Icon(Icons.lock_outline),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         obscureText: true,
                       ),
@@ -211,10 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 onPressed: _handleLogin,
                                 child: const Text(
                                   'Bejelentkezés',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                 ),
                               ),
                       ),

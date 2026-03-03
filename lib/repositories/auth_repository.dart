@@ -8,15 +8,12 @@ class AuthRepository {
 
   AuthRepository({required this.apiClient});
 
-  /// Bejelentkezés a backend /api/login endpointjára.
-  /// A backend cookie-kat állít (ACCESS_TOKEN, REFRESH_TOKEN), ezt a dio+cookie_jar kezeli.
   Future<User> login({required String email, required String password}) async {
     final dio = apiClient.dio;
 
     final response = await dio.post(
       '/login',
       data: {'email': email, 'password': password},
-      // Node/Express esetén a cookie-k így is rendben lesznek
     );
 
     if (response.statusCode != 200) {
@@ -26,8 +23,6 @@ class AuthRepository {
       throw Exception(message);
     }
 
-    // A login után a cookie-k már a cookieJar-ban vannak.
-    // Most lekérjük /api/me-t, hogy megkapjuk a user + isDelivery infót.
     final meResponse = await dio.get(
       '/me',
       options: Options(extra: {'__suppressSessionExpired': true}),
@@ -42,17 +37,16 @@ class AuthRepository {
     final userJson = meResponse.data['user'] as Map<String, dynamic>;
     final user = User.fromJson(userJson);
 
-    // Csak delivery account léphet be mobilra
-    if (!user.isDelivery) {
+    // ✅ Most már admin is beléphet (vagy futár, vagy admin, vagy mindkettő)
+    if (!user.isDelivery && !user.isAdmin) {
       throw Exception(
-        'Ez a fiók nem jogosult a futár alkalmazás használatára.',
+        'Ez a fiók nem jogosult az alkalmazás használatára.',
       );
     }
 
     return user;
   }
 
-  /// /api/me hívás – később is használhatod, ha szükséges
   Future<User?> getCurrentUser() async {
     final dio = apiClient.dio;
     final response = await dio.get(

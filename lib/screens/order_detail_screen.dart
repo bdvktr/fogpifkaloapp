@@ -101,7 +101,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 18),
                 child: Text(
-                  'Átadva',
+                  'RENDELÉS ÁTADVA',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,

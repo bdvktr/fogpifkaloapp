@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../api_client.dart';
 import '../models/user.dart';
+import '../repositories/admin_repository.dart';
 import '../repositories/auth_repository.dart';
 import '../repositories/delivery_repository.dart';
-import 'welcome_screen.dart';
 import 'delivery_home_screen.dart';
+import 'welcome_screen.dart';
 
 class StartupScreen extends StatefulWidget {
   final AuthRepository authRepository;
   final DeliveryRepository deliveryRepository;
+  final AdminRepository adminRepository;
   final ApiClient apiClient;
   final String socketUrl;
 
@@ -17,6 +19,7 @@ class StartupScreen extends StatefulWidget {
     super.key,
     required this.authRepository,
     required this.deliveryRepository,
+    required this.adminRepository,
     required this.apiClient,
     required this.socketUrl,
   });
@@ -50,6 +53,7 @@ class _StartupScreenState extends State<StartupScreen> {
         if (user != null) {
           return DeliveryHomeScreen(
             deliveryRepository: widget.deliveryRepository,
+            adminRepository: widget.adminRepository,
             currentUser: user,
             socketUrl: widget.socketUrl,
           );
@@ -58,6 +62,7 @@ class _StartupScreenState extends State<StartupScreen> {
         return WelcomeScreen(
           authRepository: widget.authRepository,
           deliveryRepository: widget.deliveryRepository,
+          adminRepository: widget.adminRepository,
           apiClient: widget.apiClient,
           socketUrl: widget.socketUrl,
         );
